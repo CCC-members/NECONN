@@ -13,7 +13,7 @@
 % try
 
 
-if(bcv_connection_status())
+if(app_connection_status())
     
     % loading local data
     local = jsondecode(fileread(strcat('app_properties.json')));
@@ -25,7 +25,7 @@ if(bcv_connection_status())
     online = webread(url,options);
     
     if(local.generals.version_number < online.generals.version_number)
-        answer = questdlg('There a new version available of BC-VARETA. Do you want to update the laster version?', ...
+        answer = questdlg({'There a new version available of BC-VARETA.',' Do you want to update the laster version?'}, ...
             'Update BC-VARETA', ...
             'Yes','No','Close');
         % Handle response
@@ -46,10 +46,11 @@ if(bcv_connection_status())
                 
                 
                 %% Download lasted version
-                filename = strcat('BCV_lasted.zip');
+                filename = strcat('BCV_lasted_version.zip');
                 disp(strcat("Downloading lasted version......."));
                 jObj.setBusyText(strcat("Downloading lasted version "));
-                url = 'https://codeload.github.com/CCC-members/BC-VARETA_Toolbox/zip/master';
+                
+                url = local.generals.base_url;                
                 matlab.net.http.HTTPOptions.VerifyServerName = false;
                 options = weboptions('Timeout',Inf,'RequestMethod','auto');
                 downladed_file = websave(filename,url,options);
@@ -73,6 +74,8 @@ if(bcv_connection_status())
                 delete(f);
                 
             case 'No'
+                return;
+            case ''
                 return;
         end
     end
